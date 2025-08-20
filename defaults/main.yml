@@ -1,2 +1,4 @@
 ---
 # defaults file for roles/lighthouse
+lighthouse_version: "master" # "d701335c25cd1bb9b5155711190bad8ab852c2ce" # commit id
+lighthouse_rep: "https://github.com/VKCOM/lighthouse.git"

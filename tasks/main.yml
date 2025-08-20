@@ -1,2 +1,51 @@
 ---
 # tasks file for roles/lighthouse
+- name: Clone lighthouse
+  block:
+    
+    - name: Install git
+      ansible.builtin.apt:
+        name: git
+        state: present
+        update_cache: yes
+
+    - name: Clone Lighthouse repo
+      ansible.builtin.git:
+        repo: "{{ lighthouse_rep }}"
+        dest: "{{ lighthouse_dir }}"
+        version: "{{ lighthouse_version }}"
+        force: yes
+      register: git_clone  
+      retries: 3
+      delay: 10
+      until: git_clone is succeeded
+    
+    - name: Set permissions
+      ansible.builtin.file:
+        path: "{{ lighthouse_dir }}"
+        owner: "www-data"
+        group: "www-data"
+        mode: "0755"
+        recurse: yes  
+      
+
+    - name: Enable lighthouse_nginx_conf
+      ansible.builtin.file:
+        src: "/etc/nginx/sites-available/{{ lighthouse_nginx_conf }}"
+        dest: "/etc/nginx/sites-enabled/{{ lighthouse_nginx_conf }}"
+        state: link
+
+    - name: Remove default config
+      ansible.builtin.file:
+        path: "/etc/nginx/sites-enabled/default"
+        state: absent
+
+    - name: Restart Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
+
+  rescue:
+    - name: Log error in lighthouse install
+      ansible.builtin.debug:
+        msg: "Произошла ошибка - lighthouse"

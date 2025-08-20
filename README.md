@@ -1,38 +1,47 @@
-Role Name
-=========
+# Ansible Role: LightHouse
 
-A brief description of the role goes here.
 
-Requirements
-------------
+## Description
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Deploy LightHouse using ansible.  
+[LightHouse is a lightweight GUI interface for ClickHouse](https://github.com/VKCOM/lighthouse) .
 
-Role Variables
---------------
+> **! Notice**  
+This role does not guarantee the correct work. This is the result of the solution of home work at the DevOPS course and an example of using ANSIBLE roles for automatic deployment of services using the example of the LightHouse service installation.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+## Requirements
 
-Dependencies
-------------
+- This version of the role requires debian 12
+- Nginx must be preinstalled for the role and configured to provide access to Lighthouse
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Role Variables
 
-Example Playbook
-----------------
+| Variables name | Default value      | Description |
+|----------------|--------------------|-------------|
+| lighthouse_version        | "master"  | "d701335c25cd1bb9b5155711190bad8ab852c2ce" # commit id      |
+| lighthouse_rep     | "https://github.com/VKCOM/lighthouse.git"     | Repository   |
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Dependencies
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+- Git (if not installed, this package will be installed)
+- Nginx
 
-License
--------
+## Example Playbook
+```yaml
+- name: Install lighthouse
+  hosts: lighthouse
+  tags: 
+    - lighthouse  
+  become: true
+  roles:
+    - role: clickhouse
+      when: nginx_installed is succeeded
+```
+## License
 
-BSD
+MIT
 
-Author Information
-------------------
+## Author Information
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Dmitrii Osipov  
+dimosspb@vk.ru
